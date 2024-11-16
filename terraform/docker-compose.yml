@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: my_postgres_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_PASSWORD=S3cr37
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=sela_db
+
+  flask_app:
+    build: .
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=S3cr37
+      - POSTGRES_DB=sela_db
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+    ports:
+      - "3001:5000"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+
